@@ -1,0 +1,55 @@
+﻿@model IEnumerable<ExamManagementSystem.Models.Exam>
+
+<a asp-controller="User" asp-action="Logout" class="btn btn-primary">Logout</a>
+
+<h2>Exam List</h2>
+
+@if (Model != null && Model.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Course</th>
+                <th>Duration (minutes)</th>
+                @if (ViewBag.Role == "Scheduler")
+                {
+                    <th>Date</th>
+                    <th>Room</th>
+                    <th>Actions</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var exam in Model)
+            {
+                <tr>
+                    <td>@exam.Course?.Name</td>
+                    <td>@exam.DurationMinutes.TotalMinutes</td>
+                        @if (ViewBag.Role == "Scheduler")
+                        {
+                        <td>
+                            @(exam.Date == DateTime.MinValue ? "Not Set" : exam.Date.ToString("yyyy-MM-dd HH:mm"))
+                        </td>
+                        <td>
+                            @(exam.Room == null ? "Not Set" : exam.Room.Number)
+                        </td>
+                        <td>
+                            <a asp-controller="Exam" asp-action="Scheduling" asp-route-id="@exam.Id" class="btn btn-warning btn-sm">
+                                Edit Jadwal
+                            </a>
+                        </td>
+                        }
+                </tr>
+
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No exams found.</p>
+}
+@if (ViewBag.Role == "Department")
+{
+    <a href="@Url.Action("Create", "Exam")" class="btn btn-success mb-3">Create New Exam</a>
+}

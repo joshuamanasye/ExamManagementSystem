@@ -1,0 +1,43 @@
+﻿@model ExamManagementSystem.Models.Exam
+
+@{
+    ViewBag.Title = "Scheduling Exam";
+}
+
+<h2>Scheduling Exam for @Model.Course?.Name</h2>
+
+<form asp-action="Scheduling" method="post">
+    <input type="hidden" name="id" value="@Model.Id" />
+
+    <div class="form-group">
+        <label>Course:</label>
+        <input class="form-control" value="@Model.Course?.Name" readonly />
+    </div>
+
+    <div class="form-group">
+        <label>Tanggal Ujian</label>
+        <input type="date" name="date" class="form-control" value="@Model.Date.ToString("yyyy-MM-dd")" required />
+    </div>
+
+    <div class="form-group">
+        <label>Jam Ujian</label>
+        <input type="time" name="time" class="form-control" value="@Model.Date.ToString("HH:mm")" required />
+    </div>
+
+    <div class="form-group">
+        <label>Ruang</label>
+        <select name="roomId" class="form-control" required>
+            <option value="">-- Pilih Ruang --</option>
+            @foreach (var room in (List<ExamManagementSystem.Models.Room>)ViewBag.Rooms)
+            {
+                var selected = Model.Room != null && Model.Room.Id == room.Id;
+                <option value="@room.Id" selected="@(selected ? "selected" : null)">
+                    @room.Number - Available: @(room.IsAvailable ? "Yes" : "No") - Capacity: @room.Capacity
+                </option>
+            }
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

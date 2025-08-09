@@ -10,6 +10,7 @@ namespace ExamManagementSystem.Models
         public DateTime Date { get; set; }
         public Room? Room { get; set; }
         public ExamFile? ExamFile { get; set; } 
+        public User? QuestionMaker { get; set; }
 
         public Exam() { }
 

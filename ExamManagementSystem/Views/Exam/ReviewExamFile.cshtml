@@ -1,0 +1,30 @@
+﻿@model ExamManagementSystem.Models.Exam
+
+<a href="@Url.Action("Index", "Exam")" class="btn btn-secondary mt-3">Back</a>
+
+<h2>Review Exam File for @Model.Course?.Name</h2>
+
+<p><strong>Question Maker:</strong> @(Model.ExamFile?.QuestionMaker?.Username ?? "Not Set")</p>
+<p><strong>Status:</strong> @Model.ExamFile?.Status.ToString()</p>
+
+@if (!string.IsNullOrEmpty(Model.ExamFile?.FilePath))
+{
+    <a href="@Url.Content(Model.ExamFile.FilePath)" download class="btn btn-primary">
+        Download Soal
+    </a>
+}
+else
+{
+    <p>Soal belum tersedia.</p>
+}
+
+<form asp-action="ReviewExamFile" method="post">
+    <input type="hidden" name="id" value="@Model.Id" />
+
+    <button type="submit" name="approvalStatus" value="Approved" class="btn btn-success" @(Model.ExamFile == null ? "disabled" : "")>
+        Approve
+    </button>
+    <button type="submit" name="approvalStatus" value="Rejected" class="btn btn-danger" @(Model.ExamFile == null ? "disabled" : "")>
+        Reject
+    </button>
+</form>

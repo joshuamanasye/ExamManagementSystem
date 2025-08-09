@@ -14,18 +14,21 @@ public class ExamController : Controller
 
     public IActionResult Index()
     {
-        var role = HttpContext.Session.GetString("Role");
+        var userId = HttpContext.Session.GetInt32("UserId");
+        ViewBag.UserId = userId;
 
-        if (role != UserRole.Department.ToString() && role != UserRole.Scheduler.ToString())
+        var role = HttpContext.Session.GetString("Role");
+        if (role != UserRole.Department.ToString() && role != UserRole.Scheduler.ToString() && role != UserRole.QuestionMaker.ToString())
         {
             return Unauthorized();
         }
-
         ViewBag.Role = role;
 
         var exams = _context.Exams
             .Include(e => e.Course)
             .Include(e => e.Room)
+            .Include(e => e.QuestionMaker)
+            .Include(e => e.ExamFile)
             .ToList();
 
         return View(exams);
@@ -131,4 +134,200 @@ public class ExamController : Controller
 
         return RedirectToAction(nameof(Index));
     }
+
+    // GET: Exam/SetQuestionMaker/{id}
+    [HttpGet]
+    public IActionResult SetQuestionMaker(int id)
+    {
+        var role = HttpContext.Session.GetString("Role");
+        if (role != UserRole.Department.ToString())
+        {
+            return Unauthorized();
+        }
+
+        var exam = _context.Exams
+            .Include(e => e.Course)
+            .Include(e => e.QuestionMaker)
+            .FirstOrDefault(e => e.Id == id);
+
+        if (exam == null)
+        {
+            return NotFound();
+        }
+
+        var questionMakers = _context.Users
+            .Where(u => u.Role == UserRole.QuestionMaker)
+            .ToList();
+
+        ViewBag.QuestionMakers = questionMakers;
+
+        return View(exam);
+    }
+
+    // POST: Exam/SetQuestionMaker/{id}
+    [HttpPost]
+    public IActionResult SetQuestionMaker(int id, int questionMakerId)
+    {
+        var role = HttpContext.Session.GetString("Role");
+        if (role != UserRole.Department.ToString())
+        {
+            return Unauthorized();
+        }
+
+        var exam = _context.Exams
+            .FirstOrDefault(e => e.Id == id);
+
+        if (exam == null)
+        {
+            return NotFound();
+        }
+
+        var questionMaker = _context.Users
+            .FirstOrDefault(u => u.Id == questionMakerId && u.Role == UserRole.QuestionMaker);
+
+        if (questionMaker == null)
+        {
+            ModelState.AddModelError("", "Invalid Question Maker selected.");
+            ViewBag.QuestionMakers = _context.Users.Where(u => u.Role == UserRole.QuestionMaker).ToList();
+            return View(exam);
+        }
+
+        exam.QuestionMaker = questionMaker;
+        _context.SaveChanges();
+
+        return RedirectToAction("Index");
+    }
+
+    [HttpGet]
+    public IActionResult UploadExamFile(int examId)
+    {
+        var role = HttpContext.Session.GetString("Role");
+        var userId = HttpContext.Session.GetInt32("UserId");
+
+        if (role != UserRole.QuestionMaker.ToString())
+        {
+            return Unauthorized();
+        }
+
+        var exam = _context.Exams
+            .Include(e => e.QuestionMaker)
+            .Include(e => e.Course)
+            .FirstOrDefault(e => e.Id == examId);
+
+
+        if (exam == null || exam.QuestionMaker == null || exam.QuestionMaker.Id != userId)
+        {
+            return Unauthorized();
+        }
+
+        ViewBag.ExamId = examId;
+        ViewBag.CourseName = exam.Course?.Name;
+
+        return View();
+    }
+
+    [HttpPost]
+    public IActionResult UploadExamFile(int examId, IFormFile file)
+    {
+        var role = HttpContext.Session.GetString("Role");
+        var userId = HttpContext.Session.GetInt32("UserId");
+
+        if (role != UserRole.QuestionMaker.ToString())
+        {
+            return Unauthorized();
+        }
+
+        var exam = _context.Exams
+            .Include(e => e.QuestionMaker)
+            .FirstOrDefault(e => e.Id == examId);
+
+        if (exam == null || exam.QuestionMaker == null || exam.QuestionMaker.Id != userId)
+        {
+            return Unauthorized();
+        }
+
+        if (file == null || file.Length == 0)
+        {
+            ModelState.AddModelError("", "Please select a file to upload.");
+            ViewBag.ExamId = examId;
+            ViewBag.CourseName = exam.Course?.Name;
+            return View();
+        }
+
+        var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
+        if (!Directory.Exists(uploadsFolder))
+        {
+            Directory.CreateDirectory(uploadsFolder);
+        }
+
+        var uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+        var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+        using (var stream = new FileStream(filePath, FileMode.Create))
+        {
+            file.CopyTo(stream);
+        }
+
+        var examFile = new ExamFile
+        {
+            FilePath = "/uploads/" + uniqueFileName,
+            Status = ApprovalStatus.Pending,
+            QuestionMaker = _context.Users.Find(userId)
+        };
+
+        _context.ExamFiles.Add(examFile);
+        _context.SaveChanges();
+
+        exam.ExamFile = examFile;
+        _context.SaveChanges();
+
+        return RedirectToAction(nameof(Index));
+    }
+
+    // GET: Exam/ReviewExamFile/{id}
+    [HttpGet]
+    public IActionResult ReviewExamFile(int id)
+    {
+        var role = HttpContext.Session.GetString("Role");
+        if (role != UserRole.Department.ToString())
+        {
+            return Unauthorized();
+        }
+
+        var exam = _context.Exams
+            .Include(e => e.ExamFile)
+            .ThenInclude(ef => ef.QuestionMaker)
+            .Include(e => e.Course)
+            .FirstOrDefault(e => e.Id == id);
+
+        if (exam == null)
+            return NotFound();
+
+        return View(exam);
+    }
+
+    // POST: Exam/ReviewExamFile/{id}
+    [HttpPost]
+    public IActionResult ReviewExamFile(int id, ApprovalStatus approvalStatus)
+    {
+        var role = HttpContext.Session.GetString("Role");
+        if (role != UserRole.Department.ToString())
+        {
+            return Unauthorized();
+        }
+
+        var exam = _context.Exams
+            .Include(e => e.ExamFile)
+            .FirstOrDefault(e => e.Id == id);
+
+        if (exam == null || exam.ExamFile == null)
+            return NotFound();
+
+        exam.ExamFile.Status = approvalStatus;
+
+        _context.SaveChanges();
+
+        return RedirectToAction(nameof(Index));
+    }
+
 }

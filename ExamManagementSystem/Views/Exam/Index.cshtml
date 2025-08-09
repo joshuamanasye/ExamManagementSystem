@@ -11,12 +11,19 @@
             <tr>
                 <th>Course</th>
                 <th>Duration (minutes)</th>
+
                 @if (ViewBag.Role == "Scheduler")
                 {
                     <th>Date</th>
                     <th>Room</th>
-                    <th>Actions</th>
                 }
+
+                @if (ViewBag.Role == "Department" || ViewBag.Role == "QuestionMaker")
+                {
+                    <th>Question Maker</th>
+                }
+
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -25,22 +32,41 @@
                 <tr>
                     <td>@exam.Course?.Name</td>
                     <td>@exam.DurationMinutes.TotalMinutes</td>
-                        @if (ViewBag.Role == "Scheduler")
-                        {
+
+                    @if (ViewBag.Role == "Scheduler")
+                    {
                         <td>
                             @(exam.Date == DateTime.MinValue ? "Not Set" : exam.Date.ToString("yyyy-MM-dd HH:mm"))
                         </td>
                         <td>
                             @(exam.Room == null ? "Not Set" : exam.Room.Number)
                         </td>
-                        <td>
-                            <a asp-controller="Exam" asp-action="Scheduling" asp-route-id="@exam.Id" class="btn btn-warning btn-sm">
-                                Edit Jadwal
-                            </a>
-                        </td>
-                        }
-                </tr>
+                    }
 
+                    @if (ViewBag.Role == "Department" || ViewBag.Role == "QuestionMaker")
+                    {
+                        <td>
+                            @(exam.QuestionMaker != null ? exam.QuestionMaker.Username : "Not Set")
+                        </td>
+                    }
+
+                    <td>
+                        @if (ViewBag.Role == "Scheduler")
+                        {
+                            <a asp-controller="Exam" asp-action="Scheduling" asp-route-id="@exam.Id" class="btn btn-warning btn-sm">Edit Jadwal </a>
+                        }
+                        else if (ViewBag.Role == "Department")
+                        {
+                            <a asp-controller="Exam" asp-action="SetQuestionMaker" asp-route-id="@exam.Id" class="btn btn-info btn-sm">Set Question Maker</a>
+
+                            <a asp-controller="Exam" asp-action="ReviewExamFile" asp-route-id="@exam.Id" class="btn btn-info btn-sm">Cek Soal</a>
+                        }
+                        else if (ViewBag.Role == "QuestionMaker" && exam.QuestionMaker != null && exam.QuestionMaker?.Id == ViewBag.UserId)
+                        {
+                            <a asp-controller="Exam" asp-action="UploadExamFile" asp-route-examId="@exam.Id" class="btn btn-success btn-sm">Upload Soal</a>
+                        }
+                    </td>
+                </tr>
             }
         </tbody>
     </table>
@@ -49,6 +75,7 @@ else
 {
     <p>No exams found.</p>
 }
+
 @if (ViewBag.Role == "Department")
 {
     <a href="@Url.Action("Create", "Exam")" class="btn btn-success mb-3">Create New Exam</a>

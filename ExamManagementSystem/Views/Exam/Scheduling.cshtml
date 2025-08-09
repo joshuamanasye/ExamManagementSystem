@@ -4,6 +4,8 @@
     ViewBag.Title = "Scheduling Exam";
 }
 
+<a href="@Url.Action("Index", "Exam")" class="btn btn-secondary mt-3">Back</a>
+
 <h2>Scheduling Exam for @Model.Course?.Name</h2>
 
 <form asp-action="Scheduling" method="post">
@@ -27,7 +29,7 @@
     <div class="form-group">
         <label>Ruang</label>
         <select name="roomId" class="form-control" required>
-            <option value="">-- Pilih Ruang --</option>
+            <option value="">Select Room</option>
             @foreach (var room in (List<ExamManagementSystem.Models.Room>)ViewBag.Rooms)
             {
                 var selected = Model.Room != null && Model.Room.Id == room.Id;

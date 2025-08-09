@@ -1,0 +1,24 @@
+﻿@model ExamManagementSystem.Models.Exam
+
+<a href="@Url.Action("Index", "Exam")" class="btn btn-secondary mt-3">Back</a>
+
+<h2>Set Question Maker for @Model.Course?.Name</h2>
+
+<form asp-action="SetQuestionMaker" method="post">
+    <input type="hidden" asp-for="Id" />
+    
+    <div class="form-group">
+        <label for="questionMakerId">Question Maker</label>
+        <select id="questionMakerId" name="questionMakerId" class="form-control">
+            <option value="">Select Question Maker</option>
+            @foreach(var qm in ViewBag.QuestionMakers as List<ExamManagementSystem.Models.User>)
+            {
+                var selected = Model.QuestionMaker != null && qm.Id == Model.QuestionMaker.Id;
+                <option value="@qm.Id" selected="@(selected ? "selected" : null)">@qm.Username</option>
+            }
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-2">Save</button>
+    <a asp-action="Index" class="btn btn-secondary mt-2">Cancel</a>
+</form>

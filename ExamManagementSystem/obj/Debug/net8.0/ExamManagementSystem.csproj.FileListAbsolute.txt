@@ -174,3 +174,4 @@ E:\Coding\Tes\IT_Div\4\ExamManagementSystem\ExamManagementSystem\bin\Debug\net8.
 E:\Coding\Tes\IT_Div\4\ExamManagementSystem\ExamManagementSystem\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerGen.dll
 E:\Coding\Tes\IT_Div\4\ExamManagementSystem\ExamManagementSystem\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerUI.dll
 E:\Coding\Tes\IT_Div\4\ExamManagementSystem\ExamManagementSystem\obj\Debug\net8.0\ExamManagementSystem.MvcApplicationPartsAssemblyInfo.cs
+E:\Coding\Tes\IT_Div\4\ExamManagementSystem\ExamManagementSystem\obj\Debug\net8.0\ExamManagementSystem.sourcelink.json

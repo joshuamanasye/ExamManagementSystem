@@ -36,8 +36,20 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRXhhbVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[E:/Coding/Tes/IT_Div/4/ExamManagementSystem/ExamManagementSystem/Views/Exam/ReviewExamFile.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRXhhbVxSZXZpZXdFeGFtRmlsZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [E:/Coding/Tes/IT_Div/4/ExamManagementSystem/ExamManagementSystem/Views/Exam/Scheduling.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRXhhbVxTY2hlZHVsaW5nLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/Coding/Tes/IT_Div/4/ExamManagementSystem/ExamManagementSystem/Views/Exam/SetQuestionMaker.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRXhhbVxTZXRRdWVzdGlvbk1ha2VyLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/Coding/Tes/IT_Div/4/ExamManagementSystem/ExamManagementSystem/Views/Exam/UploadExamFile.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRXhhbVxVcGxvYWRFeGFtRmlsZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [E:/Coding/Tes/IT_Div/4/ExamManagementSystem/ExamManagementSystem/Views/Home/Index.cshtml]

@@ -4963,11 +4963,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "E:\\Coding\\Tes\\IT_Div\\4\\ExamManagementSystem\\ExamManagementSystem\\ExamManagementSystem.csproj",
+      "projectUniqueName": "E:\\Coding\\Tes\\IT_Div\\3 & 4\\ExamManagementSystem\\ExamManagementSystem\\ExamManagementSystem.csproj",
       "projectName": "ExamManagementSystem",
-      "projectPath": "E:\\Coding\\Tes\\IT_Div\\4\\ExamManagementSystem\\ExamManagementSystem\\ExamManagementSystem.csproj",
+      "projectPath": "E:\\Coding\\Tes\\IT_Div\\3 & 4\\ExamManagementSystem\\ExamManagementSystem\\ExamManagementSystem.csproj",
       "packagesPath": "C:\\Users\\Joman\\.nuget\\packages\\",
-      "outputPath": "E:\\Coding\\Tes\\IT_Div\\4\\ExamManagementSystem\\ExamManagementSystem\\obj\\",
+      "outputPath": "E:\\Coding\\Tes\\IT_Div\\3 & 4\\ExamManagementSystem\\ExamManagementSystem\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

@@ -1,0 +1,53 @@
+﻿@model List<ExamManagementSystem.Models.Exam>
+
+<a asp-controller="User" asp-action="Logout" class="btn btn-primary">Logout</a>
+
+<h2>Input Nilai Mahasiswa</h2>
+
+@{
+    var attendances = ViewBag.Attendances as List<Attendance> ?? new List<Attendance>();
+    var grades = ViewBag.Grades as List<ExamManagementSystem.Models.Grade> ?? new List<ExamManagementSystem.Models.Grade>();
+}
+
+@foreach(var exam in Model)
+{
+    <h3>@exam.Course?.Name - @exam.Date.ToString("yyyy-MM-dd HH:mm")</h3>
+
+    var examAttendances = attendances.Where(a => a.ExamId == exam.Id).ToList();
+
+    if (examAttendances.Any())
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Mahasiswa</th>
+                    <th>Nilai</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach(var attendance in examAttendances)
+                {
+                    var grade = grades.FirstOrDefault(g => g.Exam.Id == exam.Id && g.Student.Id == attendance.StudentId);
+                    <tr>
+                        <td>@attendance.Student.Username</td>
+                        <form asp-action="SubmitScore" method="post" class="form-inline">
+                            <td>
+                                <input type="hidden" name="examId" value="@exam.Id" />
+                                <input type="hidden" name="studentId" value="@attendance.Student.Id" />
+                                <input type="number" name="score" min="0" max="100" class="form-control" value="@(grade?.Score ?? 0)" required />
+                            </td>
+                            <td>
+                                <button type="submit" class="btn btn-primary btn-sm">Submit</button>
+                            </td>
+                        </form>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>Tidak ada mahasiswa hadir untuk ujian ini.</p>
+    }
+}

@@ -18,7 +18,7 @@ public class ExamController : Controller
         ViewBag.UserId = userId;
 
         var role = HttpContext.Session.GetString("Role");
-        if (role != UserRole.Department.ToString() && role != UserRole.Scheduler.ToString() && role != UserRole.QuestionMaker.ToString())
+        if (role != UserRole.Department.ToString() && role != UserRole.Scheduler.ToString() && role != UserRole.QuestionMaker.ToString() && role != UserRole.Student.ToString())
         {
             return Unauthorized();
         }
@@ -30,6 +30,14 @@ public class ExamController : Controller
             .Include(e => e.QuestionMaker)
             .Include(e => e.ExamFile)
             .ToList();
+
+        if (role == UserRole.Student.ToString() && userId.HasValue)
+        {
+            var attendances = _context.Attendances
+                .Where(a => a.StudentId == userId.Value)
+                .ToList();
+            ViewBag.Attendances = attendances;
+        }
 
         return View(exams);
     }
@@ -119,6 +127,8 @@ public class ExamController : Controller
         }
 
         var room = _context.Rooms.FirstOrDefault(r => r.Id == roomId);
+        if (room != null) room.IsAvailable = true;
+
         if (room == null || !room.IsAvailable)
         {
             ModelState.AddModelError("", "Ruang yang dipilih tidak tersedia.");
@@ -129,6 +139,8 @@ public class ExamController : Controller
         var scheduledDateTime = date.Date + time;
         exam.Date = scheduledDateTime;
         exam.Room = room;
+
+        room.IsAvailable = false;
 
         _context.SaveChanges();
 
@@ -328,6 +340,51 @@ public class ExamController : Controller
         _context.SaveChanges();
 
         return RedirectToAction(nameof(Index));
+    }
+
+    public IActionResult PrintQueue()
+    {
+        var role = HttpContext.Session.GetString("Role");
+        if (role != UserRole.Printer.ToString())
+        {
+            return Unauthorized();
+        }
+
+        var approvedExams = _context.Exams
+            .Include(e => e.Course)
+                .ThenInclude(c => c.StudentCourses)
+            .Include(e => e.ExamFile)
+            .Where(e => e.ExamFile != null && e.ExamFile.Status == ApprovalStatus.Approved)
+            .ToList();
+
+        return View(approvedExams);
+    }
+
+    public IActionResult DownloadExamFile(int examId)
+    {
+        var role = HttpContext.Session.GetString("Role");
+        if (role != UserRole.Printer.ToString())
+        {
+            return Unauthorized();
+        }
+
+        var exam = _context.Exams
+            .Include(e => e.ExamFile)
+            .FirstOrDefault(e => e.Id == examId);
+
+        if (exam == null || exam.ExamFile == null || exam.ExamFile.Status != ApprovalStatus.Approved)
+            return NotFound();
+
+        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", exam.ExamFile.FilePath.TrimStart('/').Replace('/', Path.DirectorySeparatorChar));
+
+        if (!System.IO.File.Exists(filePath))
+            return NotFound();
+
+        var contentType = "application/pdf";
+        var fileName = Path.GetFileName(filePath);
+
+        var fileBytes = System.IO.File.ReadAllBytes(filePath);
+        return File(fileBytes, contentType, fileName);
     }
 
 }

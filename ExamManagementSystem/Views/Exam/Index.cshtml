@@ -4,6 +4,11 @@
 
 <h2>Exam List</h2>
 
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-info">@TempData["Message"]</div>
+}
+
 @if (Model != null && Model.Any())
 {
     <table class="table">
@@ -12,7 +17,7 @@
                 <th>Course</th>
                 <th>Duration (minutes)</th>
 
-                @if (ViewBag.Role == "Scheduler")
+                @if (ViewBag.Role == "Scheduler" || ViewBag.Role == "Student")
                 {
                     <th>Date</th>
                     <th>Room</th>
@@ -21,44 +26,72 @@
                 @if (ViewBag.Role == "Department" || ViewBag.Role == "QuestionMaker")
                 {
                     <th>Question Maker</th>
+                    <th>Status Soal</th>
                 }
 
-                <th>Actions</th>
+                @if (ViewBag.Role == "Student")
+                {
+                    <th>Attendance</th>
+                }
+                @if (ViewBag.Role != "Student")
+                {
+                    <th>Actions</th>
+                }
             </tr>
         </thead>
         <tbody>
+            @{
+                var attendances = ViewBag.Attendances as List<Attendance> ?? new List<Attendance>();
+            }
             @foreach (var exam in Model)
             {
                 <tr>
                     <td>@exam.Course?.Name</td>
                     <td>@exam.DurationMinutes.TotalMinutes</td>
 
-                    @if (ViewBag.Role == "Scheduler")
+                    @if (ViewBag.Role == "Scheduler" || ViewBag.Role == "Student")
                     {
-                        <td>
-                            @(exam.Date == DateTime.MinValue ? "Not Set" : exam.Date.ToString("yyyy-MM-dd HH:mm"))
-                        </td>
-                        <td>
-                            @(exam.Room == null ? "Not Set" : exam.Room.Number)
-                        </td>
+                        <td>@(exam.Date == DateTime.MinValue ? "Not Set" : exam.Date.ToString("yyyy-MM-dd HH:mm"))</td>
+                        <td>@(exam.Room == null ? "Not Set" : exam.Room.Number)</td>
                     }
 
                     @if (ViewBag.Role == "Department" || ViewBag.Role == "QuestionMaker")
                     {
+                        <td>@(exam.QuestionMaker != null ? exam.QuestionMaker.Username : "Not Set")</td>
+                        <td>@(exam.ExamFile != null ? exam.ExamFile.Status.ToString() : "Not Uploaded")</td>
+                    }
+
+                    @if (ViewBag.Role == "Student")
+                    {
+                        var attendance = attendances.FirstOrDefault(a => a.ExamId == exam.Id);
                         <td>
-                            @(exam.QuestionMaker != null ? exam.QuestionMaker.Username : "Not Set")
+                            @if (attendance != null && attendance.IsPresent)
+                            {
+                                <span class="text-success">Present</span>
+                            }
+                            else if (exam.Date <= DateTime.Now && exam.Date > DateTime.MinValue)
+                            {
+                                // Jika sudah waktunya ujian tapi belum absen, tampilkan tombol Attend
+                                <form asp-controller="Attendance" asp-action="Attend" method="post">
+                                    <input type="hidden" name="examId" value="@exam.Id" />
+                                    <button type="submit" class="btn btn-primary btn-sm">Attend</button>
+                                </form>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Not Attended</span>
+                            }
                         </td>
                     }
 
                     <td>
                         @if (ViewBag.Role == "Scheduler")
                         {
-                            <a asp-controller="Exam" asp-action="Scheduling" asp-route-id="@exam.Id" class="btn btn-warning btn-sm">Edit Jadwal </a>
+                            <a asp-controller="Exam" asp-action="Scheduling" asp-route-id="@exam.Id" class="btn btn-warning btn-sm">Edit Jadwal</a>
                         }
                         else if (ViewBag.Role == "Department")
                         {
                             <a asp-controller="Exam" asp-action="SetQuestionMaker" asp-route-id="@exam.Id" class="btn btn-info btn-sm">Set Question Maker</a>
-
                             <a asp-controller="Exam" asp-action="ReviewExamFile" asp-route-id="@exam.Id" class="btn btn-info btn-sm">Cek Soal</a>
                         }
                         else if (ViewBag.Role == "QuestionMaker" && exam.QuestionMaker != null && exam.QuestionMaker?.Id == ViewBag.UserId)

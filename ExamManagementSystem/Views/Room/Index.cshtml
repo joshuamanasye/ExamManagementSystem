@@ -1,0 +1,54 @@
+﻿@model List<ExamManagementSystem.Models.Room>
+
+@{
+    ViewBag.Title = "Manage Rooms";
+    var invigilators = ViewBag.Invigilators as List<ExamManagementSystem.Models.User>;
+}
+<a asp-controller="User" asp-action="Logout" class="btn btn-primary">Logout</a>
+
+<h2>Manage Rooms</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Number</th>
+            <th>Availability</th>
+            <th>Capacity</th>
+            <th>Invigilator</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var room in Model)
+        {
+            <tr>
+                <td>@room.Number</td>
+                <td>@(room.IsAvailable ? "Available" : "Unavailable")</td>
+                <td>@room.Capacity</td>
+                <form asp-action="AssignInvigilator" method="post" class="form-inline">
+                    <td>
+                    
+                            <input type="hidden" name="roomId" value="@room.Id" />
+                            <select name="invigilatorId" class="form-control">
+                                <option value="">None</option>
+                                @foreach (var inv in invigilators)
+                                {
+                                    if (room.Invigilator != null && inv.Id == room.Invigilator.Id)
+                                    {
+                                        <option value="@inv.Id" selected="selected">@inv.Username</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@inv.Id">@inv.Username</option>
+                                    }
+                                }
+                            </select>
+                    </td>
+                    <td>
+                        <button type="submit" class="btn btn-primary btn-sm">Assign</button>
+                    </td>
+                </form>
+            </tr>
+        }
+    </tbody>
+</table>

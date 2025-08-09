@@ -12,6 +12,8 @@ public class Attendance
 
     public bool IsPresent { get; set; }
 
+    public Attendance() { }
+
     public Attendance(int examId, int studentId, bool isPresent)
     {
         ExamId = examId;

@@ -1,0 +1,27 @@
+﻿@model IEnumerable<ExamManagementSystem.Models.Exam>
+
+<a asp-controller="User" asp-action="Logout" class="btn btn-primary">Logout</a>
+
+<h2>Daftar Soal untuk Dicetak</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Course</th>
+            <th>Jumlah Mahasiswa</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var exam in Model)
+        {
+            <tr>
+                <td>@exam.Course?.Name</td>
+                <td>@exam.Course?.GetNumverOfStudents()</td>
+                <td>
+                    <a asp-action="DownloadExamFile" asp-route-examId="@exam.Id" class="btn btn-primary btn-sm">Download Soal</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

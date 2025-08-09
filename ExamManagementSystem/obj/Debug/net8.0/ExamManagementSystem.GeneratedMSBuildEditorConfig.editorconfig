@@ -36,6 +36,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRXhhbVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[E:/Coding/Tes/IT_Div/4/ExamManagementSystem/ExamManagementSystem/Views/Exam/PrintQueue.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRXhhbVxQcmludFF1ZXVlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [E:/Coding/Tes/IT_Div/4/ExamManagementSystem/ExamManagementSystem/Views/Exam/ReviewExamFile.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRXhhbVxSZXZpZXdFeGFtRmlsZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
@@ -58,6 +62,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [E:/Coding/Tes/IT_Div/4/ExamManagementSystem/ExamManagementSystem/Views/Home/Privacy.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/Coding/Tes/IT_Div/4/ExamManagementSystem/ExamManagementSystem/Views/Room/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUm9vbVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [E:/Coding/Tes/IT_Div/4/ExamManagementSystem/ExamManagementSystem/Views/Shared/Error.cshtml]

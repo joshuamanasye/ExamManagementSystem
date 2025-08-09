@@ -19,7 +19,7 @@ namespace ExamManagementSystem.Models
 
         public int GetNumverOfStudents()
         {
-            return StudentCourses?.Count ?? 0;
+            return StudentCourses?.Count ?? 0; // ato bisa select count dari StudentCourses
         }
     }
 }
